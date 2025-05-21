@@ -4,31 +4,25 @@
     *   `clickhouse-jdbc-0.4.6-shaded.jar`
     *   `если возникнет проблема с версиями, тогда еще antlr4-runtime-4.13.2.jar`
 
-1.  **Клонировать репозиторий:**
-    ```bash
-    git clone <https://github.com/willr4in/BigDataSpark>
-    cd BigDataSpark
-    ```
-
-2.  **Запустить сервисы (PostgreSQL, Spark, ClickHouse):**
+1.  **Запустить сервисы (PostgreSQL, Spark, ClickHouse):**
     Из корневой директории проекта:
     ```bash
     docker-compose up --build -d
     ```
     *PostgreSQL будет инициализирован: таблица `mock_data` будет создана и заполнена из CSV*
 
-3. **Инициализация clickhouse базы данных:**
+2. **Инициализация clickhouse базы данных:**
    ```bash
    docker exec -it clickhouse clickhouse-client < /app/clickhouse_init.sql 
    ```
 
-4.  **Преобразование в снежинку:**
+3.  **Преобразование в снежинку:**
     ```bash
     docker exec -it spark bash
     spark-submit --jars /app/jars/postgresql-42.7.5.jar /app/spark_scripts/snowflake_model.py
     ```
 
-5.  **Загрузка данных в Clickhouse и работа отчетов**
+4.  **Загрузка данных в Clickhouse и работа отчетов**
     ```bash
     spark-submit \
       --jars /app/jars/postgresql-42.7.5.jar,/app/jars/clickhouse-jdbc-0.4.6-shaded.jar \
