@@ -17,13 +17,18 @@
     ```
     *PostgreSQL будет инициализирован: таблица `mock_data` будет создана и заполнена из CSV*
 
-3.  **Преобразование в снежинку:**
+3. **Инициализация clickhouse базы данных:**
+   ```bash
+   docker exec -it clickhouse clickhouse-client < /app/clickhouse_init.sql 
+   ```
+
+4.  **Преобразование в снежинку:**
     ```bash
     docker exec -it spark bash
     spark-submit --jars /app/jars/postgresql-42.7.5.jar /app/spark_scripts/snowflake_model.py
     ```
 
-4.  **Загрузка данных в Clickhouse и работа отчетов**
+5.  **Загрузка данных в Clickhouse и работа отчетов**
     ```bash
     spark-submit \
       --jars /app/jars/postgresql-42.7.5.jar,/app/jars/clickhouse-jdbc-0.4.6-shaded.jar \
