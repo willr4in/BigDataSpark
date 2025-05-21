@@ -30,8 +30,8 @@ suppliers_df = spark.read.jdbc(pg_url, "dim_suppliers", properties=pg_properties
 
 # Витрина продаж по продуктам
 top_products = sales_df.groupBy("product_id").agg(
-    sum("sale_quantity").alias("total_quantity"),  # Изменено на sale_quantity
-    sum("sale_total_price").alias("total_revenue")  # Изменено на sale_total_price
+    sum("sale_quantity").alias("total_quantity"), 
+    sum("sale_total_price").alias("total_revenue")  
 ).join(products_df, "product_id") \
   .orderBy(col("total_quantity").desc()) \
   .limit(10)
@@ -40,7 +40,7 @@ top_products.write.jdbc(ch_url, "top_products", mode="overwrite", properties=ch_
 
 # Общая выручка по категориям продуктов
 revenue_by_category = sales_df.groupBy("product_id").agg(
-    sum("sale_total_price").alias("total_revenue")  # Изменено на sale_total_price
+    sum("sale_total_price").alias("total_revenue")  
 ).join(products_df, "product_id") \
   .groupBy("product_category").agg(
       sum("total_revenue").alias("total_revenue")
@@ -58,7 +58,7 @@ avg_rating_reviews.write.jdbc(ch_url, "avg_rating_reviews", mode="overwrite", pr
 
 # Витрина продаж по клиентам
 top_customers = sales_df.groupBy("customer_id").agg(
-    sum("sale_total_price").alias("total_spent")  # Изменено на sale_total_price
+    sum("sale_total_price").alias("total_spent")  
 ).orderBy(col("total_spent").desc()).limit(10)
 
 top_customers.write.jdbc(ch_url, "top_customers", mode="overwrite", properties=ch_properties)
@@ -72,28 +72,28 @@ customers_by_country.write.jdbc(ch_url, "customers_by_country", mode="overwrite"
 
 # Средний чек для каждого клиента
 avg_check_per_customer = sales_df.groupBy("customer_id").agg(
-    avg("sale_total_price").alias("avg_check")  # Изменено на sale_total_price
+    avg("sale_total_price").alias("avg_check") 
 )
 
 avg_check_per_customer.write.jdbc(ch_url, "avg_check_per_customer", mode="overwrite", properties=ch_properties)
 
 # Витрина продаж по времени
 monthly_trends = sales_df.groupBy(year("sale_date").alias("year"), month("sale_date").alias("month")).agg(
-    sum("sale_total_price").alias("total_revenue")  # Изменено на sale_total_price
+    sum("sale_total_price").alias("total_revenue")  
 )
 
 monthly_trends.write.jdbc(ch_url, "monthly_trends", mode="overwrite", properties=ch_properties)
 
 # Средний размер заказа по месяцам
 avg_order_size_per_month = sales_df.groupBy(year("sale_date").alias("year"), month("sale_date").alias("month")).agg(
-    avg("sale_quantity").alias("avg_order_size")  # Изменено на sale_quantity
+    avg("sale_quantity").alias("avg_order_size")  
 )
 
 avg_order_size_per_month.write.jdbc(ch_url, "avg_order_size_per_month", mode="overwrite", properties=ch_properties)
 
 # Витрина продаж по магазинам
 top_stores = sales_df.groupBy("store_id").agg(
-    sum("sale_total_price").alias("total_revenue")  # Изменено на sale_total_price
+    sum("sale_total_price").alias("total_revenue")  
 ).join(stores_df, "store_id") \
   .orderBy(col("total_revenue").desc()).limit(5)
 
@@ -101,7 +101,7 @@ top_stores.write.jdbc(ch_url, "top_stores", mode="overwrite", properties=ch_prop
 
 # Распределение продаж по городам и странам
 sales_by_location = sales_df.groupBy("store_id").agg(
-    sum("sale_total_price").alias("total_revenue")  # Изменено на sale_total_price
+    sum("sale_total_price").alias("total_revenue")  
 ).join(stores_df, "store_id") \
   .groupBy("store_city", "store_country").agg(
       sum("total_revenue").alias("total_revenue")
@@ -111,14 +111,14 @@ sales_by_location.write.jdbc(ch_url, "sales_by_location", mode="overwrite", prop
 
 # Средний чек для каждого магазина
 avg_check_per_store = sales_df.groupBy("store_id").agg(
-    avg("sale_total_price").alias("avg_check")  # Изменено на sale_total_price
+    avg("sale_total_price").alias("avg_check")  
 )
 
 avg_check_per_store.write.jdbc(ch_url, "avg_check_per_store", mode="overwrite", properties=ch_properties)
 
 # Витрина продаж по поставщикам
 top_suppliers = sales_df.groupBy("supplier_id").agg(
-    sum("sale_total_price").alias("total_revenue")  # Изменено на sale_total_price
+    sum("sale_total_price").alias("total_revenue")  
 ).join(suppliers_df, "supplier_id") \
   .orderBy(col("total_revenue").desc()).limit(5)
 
@@ -133,7 +133,7 @@ avg_price_per_supplier.write.jdbc(ch_url, "avg_price_per_supplier", mode="overwr
 
 # Распределение продаж по странам поставщиков
 sales_by_supplier_country = sales_df.groupBy("supplier_id").agg(
-    sum("sale_total_price").alias("total_revenue")  # Изменено на sale_total_price
+    sum("sale_total_price").alias("total_revenue") 
 ).join(suppliers_df, "supplier_id") \
   .groupBy("supplier_country").agg(
       sum("total_revenue").alias("total_revenue")
@@ -156,7 +156,7 @@ highest_lowest_rating.write.jdbc(ch_url, "highest_lowest_rating", mode="overwrit
 
 # Корреляция между рейтингом и объемом продаж
 correlation_rating_sales = sales_df.join(products_df, "product_id").groupBy("product_id").agg(
-    sum("sale_quantity").alias("total_quantity"),  # Изменено на sale_quantity
+    sum("sale_quantity").alias("total_quantity"),  
     avg("product_rating").alias("avg_rating")
 )
 
